@@ -19,7 +19,7 @@ package org.springframework.jdbc.datasource;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
+import java.util.logging.Logger;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 
 /**
@@ -151,6 +151,22 @@ public class DriverManagerDataSource extends AbstractDataSource implements Smart
 			logger.info("Creating new JDBC connection to [" + url + "]");
 		}
 		return DriverManager.getConnection(url, username, password);
+	}
+
+	public Object unwrap(Class iface) throws SQLException {
+				if (iface.isInstance(this)) {
+			return this;
+		}
+		throw new SQLException("DataSource of type [" + getClass().getName() +
+				"] cannot be unwrapped as [" + iface.getName() + "]");
+	}
+
+	public boolean isWrapperFor(Class iface) throws SQLException {
+		return iface.isInstance(this);
+	}
+
+	public Logger getParentLogger() {
+		return Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	}
 
 }
